@@ -109,10 +109,29 @@
         this.$parent.removeHelper(this.helper.id)
       },
       updateHelper: function() {
-        console.log('update')
+        this.cleanInput();
+        this.combos = [...helperUtils.getCombos({size: this.size,total: this.total,included: this.included,excluded: this.excluded,minSize: this.minSize,maxSize: this.maxSize,minTotal: this.minTotal,maxTotal: this.maxTotal})]
+        this.activeCombos = [...helperUtils.getCombos({size: this.size,total:this.total,included:this.included,excluded:this.excluded,minSize:this.minSize,maxSize:this.maxSize,minTotal:this.minTotal,maxTotal:this.maxTotal})]
       },
       inputId: function(input){
         return input + '-' + this.helper.id
+      },
+      cleanInput: function() {
+        this.size = helperUtils.cleanZeroes(this.size)
+        this.total = helperUtils.cleanZeroes(this.total)
+        this.minSize = helperUtils.cleanZeroes(this.minSize)
+        this.minTotal = helperUtils.cleanZeroes(this.minTotal)
+        this.maxSize = helperUtils.cleanZeroes(this.maxSize)
+        this.maxTotal = helperUtils.cleanZeroes(this.maxTotal)
+        this.cleanIncludedExcluded()
+      },
+      cleanIncludedExcluded: function() {
+        let digits = this.included.split("")
+        this.included = digits.filter((digit) => digit.match(/[1-9]/)).join("")
+        this.included = this.included.split('').filter((v, i, a) => a.indexOf(v) === i).sort().join('')
+        digits = this.excluded.split('')
+        this.excluded = digits.filter((digit) => digit.match(/[1-9]/)).join('')
+        this.excluded = this.excluded.split('').filter((v, i, a) => a.indexOf(v) === i).sort().join('')
       }
     },
     computed: {

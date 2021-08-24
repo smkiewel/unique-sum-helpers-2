@@ -58,12 +58,12 @@ const totalSort = function(a,b) {
 
 const filterAllCombos = function(opts) {
   let a = combinations;
-
-  if ( opts['size'] != undefined && opts['size'] != '0' ){
+  if ( opts['size'] != undefined && opts['size'] != '0' && opts['size'] != ''){
     a = a.filter(e => e.length == parseInt(opts['size']));
   }
 
-  if ( opts['total'] != undefined && opts['total'] != '0' ){
+  if ( opts['total'] != undefined && opts['total'] != '0' && opts['total'] != '' ){
+
     a = a.filter(e => sumOfDigits(e) == parseInt(opts['total']));
   }
 
@@ -75,23 +75,23 @@ const filterAllCombos = function(opts) {
     a = a.filter(filterExcluded(opts['excluded']));
   }
 
-  if ( opts['minSize'] != undefined && opts['minSize'] != ''){
+  if ( opts['minSize'] != undefined && opts['minSize'] != '' && opts['minSize'] != '0'){
     a = a.filter(e => e.length >= parseInt(opts['minSize']))
   }
 
-  if ( opts['maxSize'] != undefined && opts['maxSize'] != ''){
+  if ( opts['maxSize'] != undefined && opts['maxSize'] != '' && opts['maxSize'] != '0'){
     a = a.filter(e => e.length <= parseInt(opts['maxSize']))
   }
 
-  if ( opts['minTotal'] != undefined && opts['minTotal'] != '0' ){
+  if ( opts['minTotal'] != undefined && opts['minTotal'] != ''  && opts['minTotal'] != '0'){
     a = a.filter(e => sumOfDigits(e) >= parseInt(opts['minTotal']));
   }
 
-  if ( opts['maxTotal'] != undefined && opts['maxTotal'] != '0' ){
+  if ( opts['maxTotal'] != undefined && opts['maxTotal'] != ''  && opts['maxTotal'] != '0'){
     a = a.filter(e => sumOfDigits(e) <= parseInt(opts['maxTotal']));
   }
 
-  if ( opts['size'] != undefined && opts['size'] != '0' ){
+  if ( opts['size'] != undefined && opts['size'] != '0' && opts['size'] != ''){
     a = a.sort(sizeSort);
   } else {
     a = a.sort(totalSort)
@@ -111,35 +111,44 @@ export const getCombos = function(opts){
   }
 
   //check for min-max clash
-  if (opts['minSize'] != undefined && opts['maxSize'] != undefined &&
-     (opts['size'] == undefined || opts['size'] == '0')) {
+  if (opts['minSize'] != undefined && opts['minSize'] != '' &&
+      opts['maxSize'] != undefined && opts['maxSize'] != '' &&
+     (opts['size'] == undefined || opts['size'] == '0' || opts['size'] == '')) {
     if ( parseInt(opts['minSize']) > parseInt(opts['maxSize']) ){
       return [];
     }
   }
 
   //check for min-max clash
-  if (opts['minTotal'] != undefined && opts['maxTotal'] != undefined &&
-     (opts['total'] == undefined || opts['total'] == '0')) {
-    if ( parseInt(opts['minTotal']) > parseInt(opts['maxTotal']) ){
+  if (opts['minTotal'] != undefined && opts['minTotal'] != '' &&
+      opts['maxTotal'] != undefined && opts['maxTotal'] != '' &&
+     (opts['total'] == undefined || opts['total'] == '0' || opts['total'] == '')) {
+      if ( parseInt(opts['minTotal']) > parseInt(opts['maxTotal']) ){
       return [];
     }
   }
 
   //if no filters set
-  if ( opts['included'] == undefined && opts['excluded'] == undefined  &&
-       opts['minSize'] == undefined  && opts['maxSize'] == undefined  &&
-       opts['minTotal'] == undefined  && opts['maxTotal'] == undefined  ) {
+  if ( (opts['included'] == undefined || opts['included'] == '' ) &&
+       (opts['excluded'] == undefined || opts['excluded'] == '' ) &&
+       (opts['minSize'] == undefined || opts['minSize'] == '' ) &&
+       (opts['maxSize'] == undefined || opts['maxSize'] == '' ) &&
+       (opts['minTotal'] == undefined || opts['minTotal'] == '' ) &&
+       (opts['maxTotal'] == undefined || opts['maxTotal'] == '' ) ) {
 
     //check both size and total are 0 or unset
-    if ( (opts['size'] == undefined || opts['size'] == '0') && (opts['total'] == undefined || opts['total'] == '0') ){
+    if ( (opts['size'] == undefined || opts['size'] == '0' || opts['size'] == '') &&
+         (opts['total'] == undefined || opts['total'] == '0' || opts['total'] == '') ){
       return combinations;
     }
 
     //check for both size and total
-    if ( opts['size'] != undefined && opts['total'] != undefined ){
+    if ( opts['size'] != undefined && opts['size'] != '' && opts['size'] != '0' &&
+         opts['total'] != undefined && opts['total'] != '' && opts['total'] != '0'){
+
       return allCombos[opts['size']][opts['total']] || []
     }
+
   }
 
   //return filtered list
