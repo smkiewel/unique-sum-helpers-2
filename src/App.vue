@@ -51,3 +51,9 @@
     }
   }
 </script>
+<style>
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+</style>
