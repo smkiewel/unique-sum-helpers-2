@@ -4,6 +4,13 @@
       <div class="col-12 col-md-auto"><h1>Unique Sum Helpers</h1></div>
       <div class="col-12 col-md-6 button-div"><add-helper-button></add-helper-button></div>
     </div>
+    <div class="row">
+      <sum-helper
+        v-for="helper in helpers"
+        v-bind:key="helper.id"
+        v-bind:helper="helper"
+      ></sum-helper>
+    </div>
   </div>
 </template>
 
@@ -11,6 +18,7 @@
   import Vue from 'vue'
   import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
   import AddHelperButton from './components/AddHelperButton.vue'
+  import SumHelper from './components/SumHelper.vue'
 
   import 'bootstrap/dist/css/bootstrap.css'
   import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -18,28 +26,28 @@
   Vue.use(BootstrapVue)
   Vue.use(BootstrapVueIcons)
 
-export default {
-  name: 'App',
-  components: {
-    AddHelperButton
-  },
-  methods: {
-    getNextHelperId: function() {
-      return 'helper-' + ++(this.count)
+  export default {
+    name: 'App',
+    components: {
+      AddHelperButton,
+      SumHelper
     },
-    addHelper: function(){
-      this.helpers.push({id: this.getNextHelperId()})
+    methods: {
+      getNextHelperId: function() {
+        return 'helper-' + ++(this.count)
+      },
+      addHelper: function(){
+        this.helpers.push({id: this.getNextHelperId()})
+      },
+      removeHelper: function(id) {
+        this.helpers.splice(this.helpers.findIndex(helper => helper.id == id),1)
+      }
     },
-  },
-  data: function() {
-    return {
-      helpers: [],
-      count: 0
+    data: function() {
+      return {
+        helpers: [],
+        count: 0
+      }
     }
   }
-}
 </script>
-
-<style>
-
-</style>
