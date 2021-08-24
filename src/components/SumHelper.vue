@@ -75,6 +75,11 @@
     </div>
     <table class="table table-striped">
       <tbody>
+        <combo-row
+          v-for="combo in combos"
+          v-bind:combo="combo"
+          v-bind:key="combo"
+          ></combo-row>
       </tbody>
     </table>
     <textarea v-model="notes" class="form-control"></textarea>
@@ -83,6 +88,7 @@
 
 <script>
   import * as helperUtils from '../lib/helperUtils.js'
+  import ComboRow from './ComboRow.vue'
   export default {
     props:['helper'],
     data: function() {
@@ -132,7 +138,16 @@
         digits = this.excluded.split('')
         this.excluded = digits.filter((digit) => digit.match(/[1-9]/)).join('')
         this.excluded = this.excluded.split('').filter((v, i, a) => a.indexOf(v) === i).sort().join('')
-      }
+      },
+      toggleCombo: function(combo){
+        combo = "" + combo
+        let index = this.activeCombos.indexOf(combo)
+        if ( index > -1 ){
+          this.activeCombos.splice(index,1)
+        } else {
+          this.activeCombos.push(combo)
+        }
+      },
     },
     computed: {
       sizeDisabled: function(){
@@ -141,8 +156,10 @@
       totalDisabled: function(){
         return this.total != '' && helperUtils.cleanZeroes(this.total )!= '0'
       }
+    },
+    components: {
+      ComboRow
     }
-
   }
 </script>
 

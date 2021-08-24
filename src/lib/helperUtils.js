@@ -2,7 +2,7 @@ import { combinations as generateCombos}  from './combinations.js';
 import { allCombos } from './allCombos.js';
 const combinations = generateCombos([1,2,3,4,5,6,7,8,9]).map(e => e.join(''));
 
-const sumOfDigits = function(s){
+export const sumOfDigits = function(s){
   let sum = 0;
   for ( let x=0; x < s.length; x++ ){
     sum += parseInt(s[x]);
@@ -38,6 +38,11 @@ const sizeSort = function(a,b) {
   if ( aSum < bSum ) {
     return -1
   } else if ( aSum == bSum) {
+    if ( a.length < b.length ) {
+      return -1
+    } else if ( a.length > b.length ){
+      return 1
+    }
     if ( a < b ){
       return -1
     }
@@ -47,9 +52,12 @@ const sizeSort = function(a,b) {
 
 const totalSort = function(a,b) {
   if ( a.length < b.length ){
-    return -1
+    return -1;
   }
-  if ( parseInt(a) < parseInt(b) ){
+  if ( a.length > b.length ) {
+    return 1;
+  }
+  if ( a < b ){
     return -1
   } else {
     return 1
@@ -91,7 +99,8 @@ const filterAllCombos = function(opts) {
     a = a.filter(e => sumOfDigits(e) <= parseInt(opts['maxTotal']));
   }
 
-  if ( opts['size'] != undefined && opts['size'] != '0' && opts['size'] != ''){
+  if ( opts['total'] == undefined || opts['total'] == '0' || opts['total'] == ''){
+
     a = a.sort(sizeSort);
   } else {
     a = a.sort(totalSort)
@@ -111,8 +120,8 @@ export const getCombos = function(opts){
   }
 
   //check for min-max clash
-  if (opts['minSize'] != undefined && opts['minSize'] != '' &&
-      opts['maxSize'] != undefined && opts['maxSize'] != '' &&
+  if (opts['minSize'] != undefined && opts['minSize'] != '' && opts['minSize'] != '0' &&
+      opts['maxSize'] != undefined && opts['maxSize'] != '' && opts['maxSize'] != '0' &&
      (opts['size'] == undefined || opts['size'] == '0' || opts['size'] == '')) {
     if ( parseInt(opts['minSize']) > parseInt(opts['maxSize']) ){
       return [];
@@ -120,8 +129,8 @@ export const getCombos = function(opts){
   }
 
   //check for min-max clash
-  if (opts['minTotal'] != undefined && opts['minTotal'] != '' &&
-      opts['maxTotal'] != undefined && opts['maxTotal'] != '' &&
+  if (opts['minTotal'] != undefined && opts['minTotal'] != '' && opts['minTotal'] != '0' &&
+      opts['maxTotal'] != undefined && opts['maxTotal'] != '' && opts['maxTotal'] != '0' &&
      (opts['total'] == undefined || opts['total'] == '0' || opts['total'] == '')) {
       if ( parseInt(opts['minTotal']) > parseInt(opts['maxTotal']) ){
       return [];
@@ -131,10 +140,10 @@ export const getCombos = function(opts){
   //if no filters set
   if ( (opts['included'] == undefined || opts['included'] == '' ) &&
        (opts['excluded'] == undefined || opts['excluded'] == '' ) &&
-       (opts['minSize'] == undefined || opts['minSize'] == '' ) &&
-       (opts['maxSize'] == undefined || opts['maxSize'] == '' ) &&
-       (opts['minTotal'] == undefined || opts['minTotal'] == '' ) &&
-       (opts['maxTotal'] == undefined || opts['maxTotal'] == '' ) ) {
+       (opts['minSize'] == undefined || opts['minSize'] == '' || opts['minSize'] != '0' ) &&
+       (opts['maxSize'] == undefined || opts['maxSize'] == '' || opts['maxSize'] != '0' ) &&
+       (opts['minTotal'] == undefined || opts['minTotal'] == '' || opts['minTotal'] != '0' ) &&
+       (opts['maxTotal'] == undefined || opts['maxTotal'] == '' || opts['maxTotal'] != '0' ) ) {
 
     //check both size and total are 0 or unset
     if ( (opts['size'] == undefined || opts['size'] == '0' || opts['size'] == '') &&
