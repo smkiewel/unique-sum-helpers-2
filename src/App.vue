@@ -45,7 +45,7 @@
     },
     data: function() {
       return {
-        helpers: [],
+        helpers: [{id:'helper-0'}],
         count: 0
       }
     }

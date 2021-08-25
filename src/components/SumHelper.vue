@@ -72,6 +72,23 @@
                v-bind:disabled="totalDisabled" />
       </div>
       <hr/>
+      <div>
+        <span class="hidden-field-label">Missing:</span> <span v-bind:class="{hidden: hideMissingField}" class="hidden-field">{{missing}}</span>
+        <i v-on:click="toggleMissing" class="bi" v-bind:class="missingEye"></i>
+      </div>
+      <div>
+        <span class="hidden-field-label">Required:</span> <span v-bind:class="{hidden: hideRequiredField}" class="hidden-field">{{required}}</span>
+        <i v-on:click="toggleRequired" class="bi" v-bind:class="requiredEye"></i>
+      </div>
+      <div>
+        <span class="hidden-field-label">Sum info:</span> <span v-bind:class="{hidden: hideSumField}" class="hidden-field">Min: {{minMaxSum.min}}; Max: {{minMaxSum.max}}</span>
+        <i v-on:click="toggleSumInfo" class="bi" v-bind:class="sumEye"></i>
+      </div>
+      <div>
+        <span class="hidden-field-label">Length info:</span> <span v-bind:class="{hidden: hideLengthField}" class="hidden-field">Min: {{minMaxLength.min}}; Max: {{minMaxLength.max}}</span>
+        <i v-on:click="toggleLength" class="bi" v-bind:class="lengthEye"></i>
+      </div>
+      <div>Possibilities: {{possibilities}}</div>
     </div>
     <table class="table table-striped">
       <tbody>
@@ -108,6 +125,109 @@
         maxTotal: 0,
         combos: [],
         activeCombos: []
+      }
+    },
+    computed: {
+      possibilities: function() { return this.activeCombos.length },
+      required: function() {
+        if ( this.activeCombos.length == 0 ){
+          return ''
+        }
+        let r = []
+        var longest = this.activeCombos.reduce(
+            function (a, b) {
+                return a.length > b.length ? a : b;
+            }
+        );
+        for (let x=0; x < longest.length; x++){
+          let notFound = false
+          for (let y=0; y < this.activeCombos.length; y++){
+            if ( this.activeCombos[y].indexOf(longest[x]) < 0 ){
+              notFound = true
+              break
+            }
+          }
+          if (!notFound) {
+            r.push(longest[x])
+          }
+        }
+        return r.join(',')
+      },
+      missing: function() {
+        if (this.activeCombos.length == 0){
+          return [1,2,3,4,5,6,7,8,9].join(',')
+        }
+        let m = []
+        for (let x=1;x < 10; x++){
+          const found = this.activeCombos.some(combo => String(combo).includes(x));
+          if ( !found ){
+            m.push(x)
+          }
+        }
+        return m.join(',')
+      },
+      minMaxLength: function() {
+        if (this.activeCombos.length == 0){
+          return {"min":0,"max":0}
+        }
+        let min, max;
+        min = max = this.activeCombos[0].length
+        for (var x=1; x < this.activeCombos.length; x++){
+          if ( this.activeCombos[x].length < min ){
+            min = this.activeCombos[x].length
+          }
+          if ( this.activeCombos[x].length > max ){
+            max = this.activeCombos[x].length
+          }
+        }
+        return {"min": min, "max": max}
+      },
+      minMaxSum: function() {
+        if (this.activeCombos.length == 0){
+          return {"min":0,"max":0}
+        }
+        let min, max;
+        min = max = helperUtils.sumOfDigits(this.activeCombos[0])
+        for (var x=1; x < this.activeCombos.length; x++){
+          let sum = helperUtils.sumOfDigits(this.activeCombos[x])
+          if ( sum < min ){
+            min = sum
+          }
+          if ( sum > max ){
+            max = sum
+          }
+        }
+        return {"min": min, "max": max}
+      },
+      sizeDisabled: function(){
+        return this.size != '' && helperUtils.cleanZeroes(this.size) != '0'
+      },
+      totalDisabled: function(){
+        return this.total != '' && helperUtils.cleanZeroes(this.total )!= '0'
+      },
+      missingEye: function(){
+        return {
+          "bi-eye": this.hideMissingField,
+          "bi-eye-slash": !this.hideMissingField
+        }
+      },
+      requiredEye: function(){
+        return {
+          "bi-eye": this.hideRequiredField,
+          "bi-eye-slash": !this.hideRequiredField
+        }
+      },
+      lengthEye: function(){
+        return {
+          "bi-eye": this.hideLengthField,
+          "bi-eye-slash": !this.hideLengthField
+        }
+      },
+      sumEye: function(){
+        return {
+          "bi-eye": this.hideSumField,
+          "bi-eye-slash": !this.hideSumField
+        }
       }
     },
     methods: {
@@ -148,13 +268,61 @@
           this.activeCombos.push(combo)
         }
       },
-    },
-    computed: {
-      sizeDisabled: function(){
-        return this.size != '' && helperUtils.cleanZeroes(this.size) != '0'
+      showSize: function(){
+        if (this.size != 0){
+          return {display: 'block'}
+        } else {
+          return { display: 'none'}
+        }
       },
-      totalDisabled: function(){
-        return this.total != '' && helperUtils.cleanZeroes(this.total )!= '0'
+      showTotal: function(){
+        if (this.total != 0){
+          return {display: 'block'}
+        } else {
+          return { display: 'none'}
+        }
+      },
+      showIncluded: function(){
+        if (this.included.length == 0)
+          return {display: 'none'}
+        return {display: 'block'}
+      },
+      showExcluded: function() {
+        if (this.excluded.length == 0)
+          return {display: 'none'}
+        return {display: 'block'}
+      },
+      showMissing: function() {
+        if (this.missing.length == 0)
+          return {display: 'none'}
+        return {display: 'block'}
+      },
+      showRequired: function() {
+        if (this.required.length == 0)
+          return {display: 'none'}
+        return {display: 'block'}
+      },
+      toggleMissing: function(){
+        this.hideMissingField = !this.hideMissingField
+      },
+      toggleRequired: function(){
+        this.hideRequiredField = !this.hideRequiredField
+      },
+      showLength: function() {
+        if (this.size == 0)
+          return {display: 'block'}
+        return {display: 'none'}
+      },
+      toggleLength: function(){
+        this.hideLengthField = !this.hideLengthField
+      },
+      showSumInfo: function() {
+        if (this.total == 0)
+          return {display: 'block'}
+        return {display: 'none'}
+      },
+      toggleSumInfo: function(){
+        this.hideSumField = !this.hideSumField
       }
     },
     components: {
