@@ -56,4 +56,7 @@
     padding-left: 2rem;
     padding-right: 2rem;
   }
+  .button-div {
+    margin-bottom: .5rem;
+  }
 </style>

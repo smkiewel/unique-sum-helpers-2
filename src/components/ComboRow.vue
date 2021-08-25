@@ -46,6 +46,7 @@
   i {
     color: black;
     cursor: pointer;
+    margin-left: 0.60rem;
   }
   .combo-total {
     font-weight:  bold;

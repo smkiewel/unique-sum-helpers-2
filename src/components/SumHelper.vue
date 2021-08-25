@@ -378,4 +378,11 @@
     display: inline-block;
     margin-bottom: 0;
   }
+  .table th, .table td {
+    padding: .25rem !important;
+  }
+  .sum-helper-wrapper input {
+    margin-left: .25rem;
+  }
+
 </style>
