@@ -64,9 +64,12 @@ const totalSort = function(a,b) {
   }
 }
 
+const fieldHasValue = function(field){
+  return field != undefined && field != '0' && field != ''
+}
 const filterAllCombos = function(opts) {
   let a = combinations;
-  if ( opts['size'] != undefined && opts['size'] != '0' && opts['size'] != ''){
+  if ( fieldHasValue(opts['size'])){
     a = a.filter(e => e.length == parseInt(opts['size']));
   }
 
